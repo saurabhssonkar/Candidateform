@@ -1,20 +1,13 @@
-/*-------------------------------------------------------------------
-|  🐼 React FC App
-|
-|  🐯 Purpose: RENDERS REACT APP
-|
-|  🐸 Returns:  JSX
-*-------------------------------------------------------------------*/
+import React from 'react'
+import Form from './Form'
 
-import { Navigation } from './components'
-import { Form } from './Form'
-
-function App() {
+const App = () => {
   return (
     <div>
-      <Navigation />
-      <Form />
+      <h1 className='text-center text-3xl font-medium mt-10'>Candidated Form </h1>
+      <Form/>
     </div>
+    
   )
 }
 

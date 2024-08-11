@@ -1,64 +1,95 @@
-/*-------------------------------------------------------------------
-|  🐼 React FC Form
-|
-|  🐯 Purpose: RENDERS FORM CONTEXT AND INPUTS
-|
-|  🐸 Returns:  JSX
-*-------------------------------------------------------------------*/
+import React from "react";
+import AddressInput from "./components/AddressInput";
+import FileUpload from "./components/FileUpload";
+import PersonalInformation from "./components/PersonalInformation";
+import useFormLogic from "./customHooks/useFormLogic";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
-import { Input } from './components'
-import { FormProvider, useForm } from 'react-hook-form'
-import {
-  name_validation,
-  desc_validation,
-  email_validation,
-  num_validation,
-  password_validation,
-} from './utils/inputValidations'
-import { useState } from 'react'
-import { GrMail } from 'react-icons/gr'
-import { BsFillCheckSquareFill } from 'react-icons/bs'
 
-export const Form = () => {
-  const methods = useForm()
-  const [success, setSuccess] = useState(false)
 
-  const onSubmit = methods.handleSubmit(data => {
-    console.log(data)
-    methods.reset()
-    setSuccess(true)
-  })
+const Form = () => {
+    const {
+        addressSame,
+        fileUploads,
+        candidateInformation,
+        errors,
+        fileErrors,
+        handleFileUpload,
+        handleChange,
+        handleAddFileUpload,
+        handleRemoveFileUpload,
+        submit,
+    } = useFormLogic();
 
-  return (
-    <FormProvider {...methods}>
-      <form
-        onSubmit={e => e.preventDefault()}
-        noValidate
-        autoComplete="off"
-        className="container"
-      >
-        <div className="grid gap-5 md:grid-cols-2">
-          <Input {...name_validation} />
-          <Input {...email_validation} />
-          <Input {...num_validation} />
-          <Input {...password_validation} />
-          <Input {...desc_validation} className="md:col-span-2" />
-        </div>
-        <div className="mt-5">
-          {success && (
-            <p className="font-semibold text-green-500 mb-5 flex items-center gap-1">
-              <BsFillCheckSquareFill /> Form has been submitted successfully
-            </p>
-          )}
-          <button
-            onClick={onSubmit}
-            className="p-5 rounded-md bg-blue-600 font-semibold text-white flex items-center gap-1 hover:bg-blue-800"
-          >
-            <GrMail />
-            Submit Form
-          </button>
-        </div>
-      </form>
-    </FormProvider>
-  )
-}
+    
+
+    return (
+        <><form onSubmit={submit} className="max-w-3xl mx-auto p-6 py-10 rounded-lg space-y-6">
+            <PersonalInformation
+                candidateInformation={candidateInformation}
+                handleChange={handleChange}
+                errors={errors}
+                required />
+
+            <AddressInput
+                label="Residential Address"
+                name1="street1"
+                name2="street2"
+                value1={candidateInformation.street1}
+                value2={candidateInformation.street2}
+                handleChange={handleChange}
+                required={true} />
+
+            <div className="flex items-center space-x-3">
+                <input
+                    type="checkbox"
+                    name="SameasResidential"
+                    checked={addressSame}
+                    onChange={handleChange}
+                    className="h-4 w-4 text-black border-gray-400 rounded" />
+                <label className="font-semibold text-lg text-gray-700">Same as Residential Address</label>
+            </div>
+
+            <AddressInput
+                label="Permanent Address"
+                name1="street3"
+                name2="street4"
+                value1={candidateInformation.street3}
+                value2={candidateInformation.street4}
+                handleChange={handleChange}
+                required={!addressSame} />
+                <div className="mt-4">
+      <label className="font-semibold text-lg text-gray-700">Upload Documents</label>
+    </div>
+
+            {fileUploads.map((upload, index) => (
+                <FileUpload
+                  
+                    key={index}
+                    upload={upload}
+                    index={index}
+                    handleFileUpload={handleFileUpload}
+                    handleAddFileUpload={handleAddFileUpload}
+                    handleRemoveFileUpload={handleRemoveFileUpload}
+                    fileErrors={fileErrors}
+                    required />
+            ))}
+
+            <div className="flex justify-center">
+                <button
+                    type="submit"
+                    className="py-4 px-20 bg-gray-800 text-white text-xl rounded hover:bg-gray-700"
+                >
+                    Submit
+                </button>
+            </div>
+        </form>
+        <ToastContainer />
+        </>
+
+
+    );
+};
+
+export default Form;
